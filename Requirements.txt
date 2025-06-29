@@ -1,0 +1,28 @@
+# Core libraries
+pandas
+numpy
+scikit-learn
+
+# Model tracking
+mlflow
+
+# API framework
+fastapi
+uvicorn
+
+# Data validation for FastAPI
+pydantic
+
+# Utilities
+joblib
+
+# Optional (for encoding)
+category_encoders
+
+# Optional (for RFM + clustering visualization)
+matplotlib
+seaborn
+
+# For logging and testing
+pytest
+flake8
