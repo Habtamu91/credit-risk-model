@@ -1,46 +1,39 @@
-
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
-import os
-
-# Define path to model
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "gradient_boosting.pkl")
 
 # Load trained model
-model = joblib.load(MODEL_PATH)
+model_path = "models/RandomForest_model.pkl"
+model = joblib.load(model_path)
 
+# Load the saved feature names
+with open("models/feature_names.txt", "r") as f:
+    feature_names = [line.strip() for line in f]
 
-def predict_single(input_features: list):
-    """
-    input_features: A list in the order:
-        [Total_Amount, Avg_Amount, Std_Amount, Num_Transactions,
-         Unique_Hours, Transaction_Hour, Transaction_Day,
-         Transaction_Month, Transaction_Year]
-    Returns: risk probability and high-risk flag
-    """
-    input_array = np.array([input_features])
-    risk_prob = model.predict_proba(input_array)[0][1]
-    is_high_risk = int(risk_prob > 0.5)
-    return is_high_risk, round(risk_prob, 4)
+# Example input in correct order — UPDATE values with real test case
+sample_values = [
+    50.0,    # Amount
+    75.0,    # Avg_Amount
+    256,     # CountryCode
+    0,       # FraudResult
+    5,       # Num_Transactions
+    3,       # Num_Channels
+    1,       # Month
+    5,       # Weekday
+    1,       # IsWeekend
+    10.0,    # Recency
+    4.0,     # Frequency
+    300.0,   # Monetary
+    1,       # PricingStrategy
+    0        # ChannelId_xxx (if one-hot encoded)
+]
 
+# Create DataFrame with correct column names
+sample_df = pd.DataFrame([sample_values], columns=feature_names)
 
-# Example usage
-if __name__ == "__main__":
-    # Example customer features
-    sample_input = [
-        2500.0,     # Total_Amount
-        500.0,      # Avg_Amount
-        300.0,      # Std_Amount
-        5.0,        # Num_Transactions
-        3.0,        # Unique_Hours
-        14.0,       # Transaction_Hour
-        15.0,       # Transaction_Day
-        6.0,        # Transaction_Month
-        2025.0      # Transaction_Year
-    ]
+# Predict
+pred_class = model.predict(sample_df)[0]
+pred_prob = model.predict_proba(sample_df)[0][1]
 
-    is_high_risk, prob = predict_single(sample_input)
-    print("Risk Probability:", prob)
-    print("Predicted is_high_risk:", is_high_risk)
+print(f"Predicted Class (is_high_risk): {pred_class}")
+print(f"Predicted Risk Probability: {round(pred_prob, 4)}")

@@ -26,3 +26,7 @@ seaborn
 # For logging and testing
 pytest
 flake8
+fastapi
+flake8
+pytest
+streamlit
